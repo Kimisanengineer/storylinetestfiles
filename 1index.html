@@ -1,0 +1,33 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Protected Access</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; text-align: center; }
+    input { padding: 0.5em; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Access AWARE Course</h1>
+  <input type="password" id="password" placeholder="Enter password" />
+  <button onclick="checkPassword()">Enter</button>
+
+  <script>
+    function checkPassword() {
+     const input = document.getElementById("password").value;
+const encoded = btoa(input); // encode user input to base64
+const correct = "SUgyMDI1"; // base64 version of "IB2025"
+
+if (encoded === correct) {
+  window.location.href = "home.html"; // the actual page
+} else {
+  alert("Incorrect password.");
+}
+
+    }
+  
+  </script>
+</body>
+</html>
