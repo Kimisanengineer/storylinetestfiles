@@ -2,238 +2,71 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Medical Clinic Visual Escape Room</title>
+<title>Interactive Case Study</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
 <style>
-  * {
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+  body { margin:0; background:#020617; font-family:Arial; color:#f8fafc; }
+  .container {
+    max-width:1200px;
+    aspect-ratio:16/9;
+    margin:auto;
+    background:#0f172a;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:20px;
   }
-
-  body {
-    margin: 0;
-    background: #020617;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  /* 16:9 RESPONSIVE CONTAINER */
-  .escape-room {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    aspect-ratio: 16 / 9;
-    background: #000;
-    overflow: hidden;
-    border-radius: 12px;
-  }
-
-  /* BACKDROP */
-  .backdrop {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* HOTSPOTS */
-  .hotspot {
-    position: absolute;
-    border: 3px solid rgba(34, 211, 238, 0.7);
-    background: rgba(34, 211, 238, 0.18);
-    border-radius: 10px;
-    cursor: pointer;
-  }
-
-  .hotspot:focus {
-    outline: 4px solid #22d3ee;
-    outline-offset: 2px;
-  }
-
-  .hotspot.visited {
-    border-color: #22c55e;
-    background: rgba(34, 197, 94, 0.25);
-  }
-
-  /* STATUS */
-  .status {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: rgba(15, 23, 42, 0.9);
-    color: #f8fafc;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-  }
-
-  /* MODAL */
-  .modal {
-    position: absolute;
-    inset: 0;
-    background: rgba(2, 6, 23, 0.85);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-  }
-
-  .modal-content {
-    background: #f8fafc;
-    color: #020617;
-    width: 90%;
-    max-width: 560px;
-    padding: 24px;
-    border-radius: 16px;
-  }
-
-  .modal h2 {
-    margin-top: 0;
-  }
-
-  .modal button {
-    margin-top: 18px;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-  }
-
-  .modal button:hover {
-    background: #1d4ed8;
-  }
-
-  /* COMPLETION */
-  .complete {
-    position: absolute;
-    bottom: 14px;
-    right: 14px;
-    background: #22c55e;
-    color: #022c22;
-    padding: 12px 18px;
-    border-radius: 10px;
-    font-weight: bold;
-    display: none;
-  }
+  header { display:flex; justify-content:space-between; }
+  main { display:grid; grid-template-columns:65% 35%; gap:20px; }
+  section { background:#020617; padding:16px; border-radius:12px; overflow:auto; }
+  textarea { width:100%; height:120px; }
+  button { padding:12px 18px; border-radius:8px; border:none; cursor:pointer; }
+  footer { text-align:right; }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<div class="escape-room" role="application" aria-label="Medical clinic visual escape room">
+<header>
+  <strong>Case Study: Leadership Decision</strong>
+  <span>Step <span id="step">1</span> / 3</span>
+</header>
 
-  <!-- BACKDROP IMAGE -->
-  <!-- Replace this with your own image if desired -->
-  <img
-    class="backdrop"
-    src="https://via.placeholder.com/1920x1080?text=Clinic+Room+Scene"
-    alt="Clinic examination room"
-  />
+<main>
+  <section id="scenario">
+    <h3>Scenario</h3>
+    <p id="scenarioText">
+      You are leading a team facing a critical deadline and limited resources.
+    </p>
+  </section>
 
-  <!-- STATUS -->
-  <div class="status">
-    Explored: <span id="count">0</span> / 4
-  </div>
+  <section>
+    <h3>Notes</h3>
+    <textarea placeholder="Take notes here..."></textarea>
+  </section>
+</main>
 
-  <!-- HOTSPOTS -->
-  <button class="hotspot"
-    style="top: 45%; left: 14%; width: 14%; height: 22%;"
-    data-id="bp"
-    aria-label="Blood pressure monitor">
-  </button>
-
-  <button class="hotspot"
-    style="top: 18%; left: 50%; width: 20%; height: 22%;"
-    data-id="chart"
-    aria-label="Patient chart">
-  </button>
-
-  <button class="hotspot"
-    style="top: 62%; left: 50%; width: 22%; height: 20%;"
-    data-id="meds"
-    aria-label="Medication tray">
-  </button>
-
-  <button class="hotspot"
-    style="top: 28%; left: 76%; width: 20%; height: 34%;"
-    data-id="computer"
-    aria-label="Computer workstation">
-  </button>
-
-  <!-- MODAL -->
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <h2 id="modalTitle"></h2>
-      <p id="modalText"></p>
-      <button onclick="closeModal()">Close</button>
-    </div>
-  </div>
-
-  <!-- COMPLETION -->
-  <div class="complete" id="complete">
-    ✔ All areas explored
-  </div>
+<footer>
+  <button onclick="nextStep()">Continue</button>
+</footer>
 
 </div>
 
 <script>
-  const hotspots = document.querySelectorAll('.hotspot');
-  const modal = document.getElementById('modal');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalText = document.getElementById('modalText');
-  const countDisplay = document.getElementById('count');
-  const complete = document.getElementById('complete');
+  let step = 1;
+  const scenarios = [
+    "You are leading a team facing a critical deadline and limited resources.",
+    "Two team members disagree on priorities. Productivity is slowing.",
+    "You must decide how to resolve the conflict."
+  ];
 
-  const content = {
-    bp: {
-      title: "Blood Pressure Monitor",
-      text: "Reading shows 148/92 mmHg, indicating Stage 2 Hypertension."
-    },
-    chart: {
-      title: "Patient Chart",
-      text: "Patient history includes obesity, family history of hypertension, and inconsistent medication adherence."
-    },
-    meds: {
-      title: "Medication Tray",
-      text: "Lisinopril 10 mg daily. Monitor for side effects and missed doses."
-    },
-    computer: {
-      title: "Computer Workstation",
-      text: "Recent labs show elevated LDL cholesterol with normal glucose levels."
+  function nextStep() {
+    if (step < scenarios.length) {
+      step++;
+      document.getElementById("step").textContent = step;
+      document.getElementById("scenarioText").textContent = scenarios[step-1];
     }
-  };
-
-  const visited = new Set();
-
-  hotspots.forEach(hotspot => {
-    hotspot.addEventListener('click', () => {
-      const id = hotspot.dataset.id;
-
-      modalTitle.textContent = content[id].title;
-      modalText.textContent = content[id].text;
-      modal.style.display = 'flex';
-
-      if (!visited.has(id)) {
-        visited.add(id);
-        hotspot.classList.add('visited');
-        countDisplay.textContent = visited.size;
-      }
-
-      if (visited.size === hotspots.length) {
-        complete.style.display = 'block';
-      }
-    });
-  });
-
-  function closeModal() {
-    modal.style.display = 'none';
   }
 </script>
-
 </body>
 </html>
